@@ -84,6 +84,12 @@ module.exports = (input) => {
     currentFile.chunks.push(currentChunk);
   };
 
+  const renameFile = (line, match) => {
+    restart();
+    currentFile[match[1]] = parseOldOrNewFile(line.substr(match[0].length));
+    currentFile.renamed = true;
+  };
+
   const del = (line) => {
     if (!currentChunk) return;
 
@@ -133,6 +139,7 @@ module.exports = (input) => {
     [/^---\s/, fromFile],
     [/^\+\+\+\s/, toFile],
     [/^@@\s+-(\d+),?(\d+)?\s+\+(\d+),?(\d+)?\s@@/, chunk],
+    [/^rename (to|from)/, renameFile],
     [/^-/, del],
     [/^\+/, add],
     [/^\\ No newline at end of file$/, eof],
